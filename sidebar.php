@@ -1,5 +1,6 @@
 <!-- Sidebar -->
 <div class="sidebar">
+    <link rel="stylesheet" href="css/styles.css">
     <div class="sidebar-brand">
         <div class="brand-icon">📊</div>
         <div class="brand-text">SDLC Tracker</div>
