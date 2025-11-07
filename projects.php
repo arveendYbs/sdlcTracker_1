@@ -98,7 +98,8 @@ if (isset($_GET['edit']) && is_numeric($_GET['edit'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Projects - SDLC Project Tracker</title>
     <link href="css/bootstrap.min.css" rel="stylesheet">
-    <style>
+    <link href="css/styles.css" rel="stylesheet">
+    <!-- <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
@@ -145,13 +146,13 @@ if (isset($_GET['edit']) && is_numeric($_GET['edit'])) {
         .table-actions a {
             margin-right: 5px;
         }
-    </style>
+    </style> -->
 </head>
 <body>
     <div class="container-fluid">
         <div class="row">
             <!-- Sidebar -->
-            <div class="col-md-2 sidebar">
+            <!-- <div class="col-md-2 sidebar">
                 <div class="sidebar-brand">
                     <i class="bi bi-kanban"></i> SDLC Tracker
                 </div>
@@ -172,7 +173,8 @@ if (isset($_GET['edit']) && is_numeric($_GET['edit'])) {
                         <span>🚀</span> Releases
                     </a>
                 </nav>
-            </div>
+            </div> -->
+            <?php include 'sidebar.php'; ?>
 
             <!-- Main Content -->
             <div class="col-md-10 main-content p-4">
