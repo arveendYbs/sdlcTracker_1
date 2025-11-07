@@ -150,46 +150,21 @@ if (isset($_GET['edit']) && is_numeric($_GET['edit'])) {
 </head>
 <body>
     <div class="container-fluid">
-        <div class="row">
-            <!-- Sidebar -->
-            <!-- <div class="col-md-2 sidebar">
-                <div class="sidebar-brand">
-                    <i class="bi bi-kanban"></i> SDLC Tracker
-                </div>
-                <nav class="nav flex-column mt-3">
-                    <a class="nav-link" href="index.php">
-                        <span>📊</span> Dashboard
-                    </a>
-                    <a class="nav-link active" href="projects.php">
-                        <span>📁</span> Projects
-                    </a>
-                    <a class="nav-link" href="features.php">
-                        <span>✨</span> Features
-                    </a>
-                    <a class="nav-link" href="bugs.php">
-                        <span>🐛</span> Bugs
-                    </a>
-                    <a class="nav-link" href="releases.php">
-                        <span>🚀</span> Releases
-                    </a>
-                </nav>
-            </div> -->
+        
             <?php include 'sidebar.php'; ?>
 
             <!-- Main Content -->
-            <div class="col-md-10 main-content p-4">
-                <!-- Page Header -->
-                <div class="page-header">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h2 class="mb-0">📁 Projects Management</h2>
-                            <p class="text-muted mb-0">Manage all your software development projects</p>
-                        </div>
-                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#projectModal" onclick="resetForm()">
-                            ➕ Add New Project
-                        </button>
-                    </div>
-                </div>
+    <div class="main-content">
+        <!-- Page Header -->
+        <div class="page-header ">
+            <div>
+                <h4>Projects Management 📁</h4>
+                <p class="subtitle">Manage all your software development projects</p>
+            </div>
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#projectModal" onclick="resetForm()">
+                ➕ Add New Project
+            </button>
+        </div>
 
                 <!-- Alert Messages -->
                 <?php if ($message): ?>
@@ -201,7 +176,7 @@ if (isset($_GET['edit']) && is_numeric($_GET['edit'])) {
 
                 <!-- Projects Table -->
                 <div class="card">
-                    <div class="card-header bg-primary text-white">
+                    <div class="card-header">
                         <h5 class="mb-0">All Projects</h5>
                     </div>
                     <div class="card-body">

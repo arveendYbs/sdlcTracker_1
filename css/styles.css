@@ -356,3 +356,131 @@ body {
         gap: 1rem;
     }
 }
+
+/* Additional Dashboard Styles */
+.stat-card {
+    background: #fff;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.125rem 0.375rem rgba(67, 89, 113, 0.12);
+    transition: all 0.2s;
+    border: none;
+    height: 100%;
+
+}
+
+.stat-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 0.25rem 0.75rem rgba(67, 89, 113, 0.16);
+}
+
+.stat-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.stat-card.projects .stat-icon {
+    background: rgba(105, 108, 255, 0.12);
+    color: var(--primary);
+}
+
+.stat-card.features .stat-icon {
+    background: rgba(113, 221, 55, 0.12);
+    color: var(--success);
+}
+
+.stat-card.bugs .stat-icon {
+    background: rgba(255, 62, 29, 0.12);
+    color: var(--danger);
+}
+
+.stat-card.releases .stat-icon {
+    background: rgba(3, 195, 236, 0.12);
+    color: var(--info);
+}
+
+.stat-value {
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: var(--dark);
+}
+
+.stat-label {
+    font-size: 0.9375rem;
+    color: #a1acb8;
+    margin-top: 0.25rem;
+}
+
+.stat-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    margin-top: 0.75rem;
+}
+
+.stat-badge.success { color: var(--success); }
+.stat-badge.danger { color: var(--danger); }
+
+/* Chart Cards */
+.chart-card {
+    background: #fff;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.125rem 0.375rem rgba(67, 89, 113, 0.12);
+    border: none;
+}
+
+.chart-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--dark);
+    margin: 0;
+}
+
+.chart-container {
+    position: relative;
+    height: 320px;
+}
+
+/* Recent Projects List */
+.list-group-item {
+    border: none;
+    padding: 1rem;
+    margin-bottom: 0.5rem;
+    background: #fafbfc;
+    border-radius: 0.375rem;
+    transition: all 0.2s;
+}
+
+.list-group-item:hover {
+    background: #f0f2f5;
+    transform: translateX(4px);
+}
+
+.project-title {
+    font-weight: 600;
+    color: var(--dark);
+    font-size: 0.9375rem;
+    margin-bottom: 0.25rem;
+}
+
+.project-desc {
+    font-size: 0.8125rem;
+    color: #a1acb8;
+    margin-bottom: 0.5rem;
+}
+
+/* Utility Classes */
+.fw-semibold {
+    font-weight: 600;
+}
+
+.text-muted {
+    color: #a1acb8 !important;
+}

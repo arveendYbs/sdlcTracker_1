@@ -102,7 +102,8 @@ while ($row = $stats_result->fetch_assoc()) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Features - SDLC Project Tracker</title>
     <link href="css/bootstrap.min.css" rel="stylesheet">
-    <style>
+    <link href="css/styles.css" rel="stylesheet">
+    <!-- <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
@@ -148,40 +149,16 @@ while ($row = $stats_result->fetch_assoc()) {
             border-radius: 5px;
             margin-bottom: 10px;
         }
-    </style>
+    </style> -->
 </head>
 <body>
     <div class="container-fluid">
-        <div class="row">
-            <!-- Sidebar -->
-            <div class="col-md-2 sidebar">
-                <div class="sidebar-brand">
-                    <i class="bi bi-kanban"></i> SDLC Tracker
-                </div>
-                <nav class="nav flex-column mt-3">
-                    <a class="nav-link" href="index.php">
-                        <span>📊</span> Dashboard
-                    </a>
-                    <a class="nav-link" href="projects.php">
-                        <span>📁</span> Projects
-                    </a>
-                    <a class="nav-link active" href="features.php">
-                        <span>✨</span> Features
-                    </a>
-                    <a class="nav-link" href="bugs.php">
-                        <span>🐛</span> Bugs
-                    </a>
-                    <a class="nav-link" href="releases.php">
-                        <span>🚀</span> Releases
-                    </a>
-                </nav>
-            </div>
+        <?php include 'sidebar.php'; ?>
 
             <!-- Main Content -->
-            <div class="col-md-10 main-content p-4">
+            <div class="main-content">
                 <!-- Page Header -->
                 <div class="page-header">
-                    <div class="d-flex justify-content-between align-items-center">
                         <div>
                             <h2 class="mb-0">✨ Features Backlog</h2>
                             <p class="text-muted mb-0">Manage all feature requests and user stories</p>
@@ -189,7 +166,6 @@ while ($row = $stats_result->fetch_assoc()) {
                         <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#featureModal" onclick="resetForm()">
                             ➕ Add New Feature
                         </button>
-                    </div>
                 </div>
 
                 <!-- Alert Messages -->
@@ -199,22 +175,28 @@ while ($row = $stats_result->fetch_assoc()) {
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
                 <?php endif; ?>
-
+         
                 <!-- Statistics Cards -->
                 <div class="row g-3 mb-4">
-                    <div class="col-md-4">
-                        <div class="stat-mini bg-secondary text-white">
+                    <div class="col-12 col-sm-6 col-xl-3">
+                        <div class="card stat-card projects">
+                            <div class="card-body">
                             <strong>To Do:</strong> <?php echo $status_stats['To Do'] ?? 0; ?> features
+                            </div>
                         </div>
                     </div>
-                    <div class="col-md-4">
-                        <div class="stat-mini bg-warning text-dark">
+                    <div class="col-12 col-sm-6 col-xl-3">
+                        <div class="card stat-card projects">
+                            <div class="card-body bg-warning text-dark">
                             <strong>In Progress:</strong> <?php echo $status_stats['In Progress'] ?? 0; ?> features
+                            </div>
                         </div>
                     </div>
-                    <div class="col-md-4">
-                        <div class="stat-mini bg-success text-white">
+                    <div class="col-12 col-sm-6 col-xl-3">
+                        <div class="card stat-card projects">
+                            <div class="card-body bg-success text-white">
                             <strong>Done:</strong> <?php echo $status_stats['Done'] ?? 0; ?> features
+                            </div>
                         </div>
                     </div>
                 </div>
