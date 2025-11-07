@@ -160,7 +160,7 @@ while ($row = $stats_result->fetch_assoc()) {
                 <!-- Page Header -->
                 <div class="page-header">
                         <div>
-                            <h2 class="mb-0">✨ Features Backlog</h2>
+                            <h4>✨ Features Backlog</h4>
                             <p class="text-muted mb-0">Manage all feature requests and user stories</p>
                         </div>
                         <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#featureModal" onclick="resetForm()">
@@ -187,14 +187,14 @@ while ($row = $stats_result->fetch_assoc()) {
                     </div>
                     <div class="col-12 col-sm-6 col-xl-3">
                         <div class="card stat-card projects">
-                            <div class="card-body bg-warning text-dark">
+                            <div class="card-body bg-warning text-dark rounded">
                             <strong>In Progress:</strong> <?php echo $status_stats['In Progress'] ?? 0; ?> features
                             </div>
                         </div>
                     </div>
                     <div class="col-12 col-sm-6 col-xl-3">
                         <div class="card stat-card projects">
-                            <div class="card-body bg-success text-white">
+                            <div class="card-body bg-success text-white rounded">
                             <strong>Done:</strong> <?php echo $status_stats['Done'] ?? 0; ?> features
                             </div>
                         </div>

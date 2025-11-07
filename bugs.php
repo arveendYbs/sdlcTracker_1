@@ -164,36 +164,12 @@ while ($row = $status_result->fetch_assoc()) {
 </head>
 <body>
     <div class="container-fluid">
-        <div class="row">
-            <!-- Sidebar -->
-            <div class="col-md-2 sidebar">
-                <div class="sidebar-brand">
-                    <i class="bi bi-kanban"></i> SDLC Tracker
-                </div>
-                <nav class="nav flex-column mt-3">
-                    <a class="nav-link" href="index.php">
-                        <span>📊</span> Dashboard
-                    </a>
-                    <a class="nav-link" href="projects.php">
-                        <span>📁</span> Projects
-                    </a>
-                    <a class="nav-link" href="features.php">
-                        <span>✨</span> Features
-                    </a>
-                    <a class="nav-link active" href="bugs.php">
-                        <span>🐛</span> Bugs
-                    </a>
-                    <a class="nav-link" href="releases.php">
-                        <span>🚀</span> Releases
-                    </a>
-                </nav>
-            </div>
+        <?php include 'sidebar.php'; ?>
 
             <!-- Main Content -->
-            <div class="col-md-10 main-content p-4">
+            <div class="main-content">
                 <!-- Page Header -->
                 <div class="page-header">
-                    <div class="d-flex justify-content-between align-items-center">
                         <div>
                             <h2 class="mb-0">🐛 Bug Tracker</h2>
                             <p class="text-muted mb-0">Track and manage all reported bugs and issues</p>
@@ -201,7 +177,6 @@ while ($row = $status_result->fetch_assoc()) {
                         <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#bugModal" onclick="resetForm()">
                             ➕ Report New Bug
                         </button>
-                    </div>
                 </div>
 
                 <!-- Alert Messages -->
@@ -213,43 +188,56 @@ while ($row = $status_result->fetch_assoc()) {
                 <?php endif; ?>
 
                 <!-- Statistics Cards -->
-                <div class="row g-3 mb-3">
-                    <div class="col-md-3">
-                        <div class="stat-mini bg-info text-white">
-                            <strong>Low:</strong> <?php echo $severity_stats['Low'] ?? 0; ?> bugs
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="stat-mini bg-warning text-dark">
-                            <strong>Medium:</strong> <?php echo $severity_stats['Medium'] ?? 0; ?> bugs
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="stat-mini bg-danger text-white">
-                            <strong>High:</strong> <?php echo $severity_stats['High'] ?? 0; ?> bugs
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="stat-mini bg-dark text-white">
-                            <strong>Critical:</strong> <?php echo $severity_stats['Critical'] ?? 0; ?> bugs
-                        </div>
-                    </div>
-                </div>
-
                 <div class="row g-3 mb-4">
-                    <div class="col-md-4">
-                        <div class="stat-mini bg-danger text-white">
-                            <strong>Open:</strong> <?php echo $status_stats['Open'] ?? 0; ?> bugs
+                    <div class="col-10 col-sm-6 col-xl-3">
+                        <div class="card stat-card projects">
+                            <div class="card-body">
+                            <strong>Low:</strong> <?php echo $severity_stats['Low'] ?? 0; ?> bugs
+                            </div>
                         </div>
                     </div>
-                    <div class="col-md-4">
-                        <div class="stat-mini bg-warning text-dark">
+                    <div class="col-12 col-sm-6 col-xl-3">
+                        <div class="card stat-card projects">
+                            <div class="card-body bg-warning text-dark rounded">
+                            <strong>Medium:</strong> <?php echo $severity_stats['Medium'] ?? 0; ?> bugs
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-xl-3">
+                        <div class="card stat-card projects">
+                            <div class="card-body bg-danger text-white rounded">
+                            <strong>High:</strong> <?php echo $severity_stats['High'] ?? 0; ?> bugs
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-xl-3">
+                        <div class="card stat-card projects">
+                            <div class="card-body bg-dark text-white rounded">
+                            <strong>Critical:</strong> <?php echo $severity_stats['Critical'] ?? 0; ?> bugs
+                            </div>
+                        </div>
+                    </div>
+                
+
+                    <div class="col-12 col-sm-6 col-xl-3">
+                        <div class="card stat-card projects">
+                            <div class="card-body bg-danger text-white rounded">
+                                <strong>Open:</strong> <?php echo $status_stats['Open'] ?? 0; ?> bugs
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-xl-3">
+                        <div class="card stat-card projects">
+                            <div class="card-body bg-warning text-dark rounded">
                             <strong>In Review:</strong> <?php echo $status_stats['In Review'] ?? 0; ?> bugs
+                            </div>
                         </div>
                     </div>
-                    <div class="col-md-4">
-                        <div class="stat-mini bg-success text-white">
+                    <div class="col-12 col-sm-6 col-xl-3">
+                        <div class="card stat-card projects">
+                            <div class="card-body bg-success text-white rounded">
                             <strong>Closed:</strong> <?php echo $status_stats['Closed'] ?? 0; ?> bugs
+                            </div>
                         </div>
                     </div>
                 </div>
