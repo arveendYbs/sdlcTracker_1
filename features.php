@@ -103,53 +103,7 @@ while ($row = $stats_result->fetch_assoc()) {
     <title>Features - SDLC Project Tracker</title>
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/styles.css" rel="stylesheet">
-    <!-- <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        .sidebar {
-            min-height: 100vh;
-            background: linear-gradient(180deg, #2c3e50 0%, #34495e 100%);
-            padding: 0;
-        }
-        .sidebar .nav-link {
-            color: #ecf0f1;
-            padding: 12px 20px;
-            border-left: 3px solid transparent;
-            transition: all 0.3s;
-        }
-        .sidebar .nav-link:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-            border-left-color: #3498db;
-        }
-        .sidebar .nav-link.active {
-            background-color: rgba(52, 152, 219, 0.2);
-            border-left-color: #3498db;
-            font-weight: 600;
-        }
-        .sidebar-brand {
-            padding: 20px;
-            color: #fff;
-            font-size: 1.5rem;
-            font-weight: bold;
-            background-color: rgba(0, 0, 0, 0.2);
-        }
-        .main-content {
-            background-color: #f8f9fa;
-            min-height: 100vh;
-        }
-        .page-header {
-            background: white;
-            padding: 20px;
-            margin-bottom: 30px;
-            border-bottom: 3px solid #2ecc71;
-        }
-        .stat-mini {
-            padding: 10px 15px;
-            border-radius: 5px;
-            margin-bottom: 10px;
-        }
-    </style> -->
+    
 </head>
 <body>
     <div class="container-fluid">

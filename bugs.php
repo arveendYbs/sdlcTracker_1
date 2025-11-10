@@ -6,7 +6,7 @@
  * Includes: List view, Add, Edit, and Delete functionality
  */
 
-require_once __DIR__ . '/db.php';
+require_once 'db.php';
 
 // Handle form submissions
 $message = '';
@@ -55,9 +55,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action']) && $_POST['a
     $title = trim($_POST['title']);
     $severity = $_POST['severity'];
     $status = $_POST['status'];
+    $resolution_remarks = isset($_POST['resolution_remarks']) ? trim($_POST['resolution_remarks']) : null;
+    $resolution_code = isset($_POST['resolution_code']) ? trim($_POST['resolution_code']) : null;
     
-    $stmt = $conn->prepare("UPDATE bugs SET project_id=?, title=?, severity=?, status=? WHERE id=?");
-    $stmt->bind_param("isssi", $project_id, $title, $severity, $status, $id);
+    // If status is being changed to Closed, set resolved_at timestamp
+    $resolved_at = null;
+    if ($status == 'Closed') {
+        $resolved_at = date('Y-m-d H:i:s');
+    }
+    
+    if ($resolved_at) {
+        $stmt = $conn->prepare("UPDATE bugs SET project_id=?, title=?, severity=?, status=?, resolution_remarks=?, resolution_code=?, resolved_at=? WHERE id=?");
+        $stmt->bind_param("issssssi", $project_id, $title, $severity, $status, $resolution_remarks, $resolution_code, $resolved_at, $id);
+    } else {
+        $stmt = $conn->prepare("UPDATE bugs SET project_id=?, title=?, severity=?, status=?, resolution_remarks=?, resolution_code=? WHERE id=?");
+        $stmt->bind_param("isssssi", $project_id, $title, $severity, $status, $resolution_remarks, $resolution_code, $id);
+    }
     
     if ($stmt->execute()) {
         $message = "Bug updated successfully!";
@@ -113,8 +126,42 @@ while ($row = $status_result->fetch_assoc()) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bugs - SDLC Project Tracker</title>
     <link href="css/bootstrap.min.css" rel="stylesheet">
-    <link href="css/styles.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
     <!-- <style>
+        /* Resolution Feature Styles */
+        .has-resolution {
+            background: linear-gradient(90deg, rgba(3, 195, 236, 0.05) 0%, transparent 10%);
+        }
+        
+        .has-resolution:hover {
+            background: linear-gradient(90deg, rgba(3, 195, 236, 0.12) 0%, rgba(3, 195, 236, 0.05) 100%) !important;
+            transition: all 0.2s;
+        }
+        
+        tr.has-resolution td:first-child::before {
+            content: "💡";
+            position: absolute;
+            left: 5px;
+            font-size: 0.8rem;
+        }
+        
+        /* Code display styling */
+        #resolutionCodeContent {
+            font-family: 'Courier New', Courier, monospace;
+        }
+        
+        /* Resolution modal styling */
+        #resolutionModal .card {
+            border: 1px solid #dee2e6;
+            box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.075);
+        }
+        
+        #resolutionModal .card-header {
+            background: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
+            font-weight: 600;
+        }
+        
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
@@ -164,14 +211,15 @@ while ($row = $status_result->fetch_assoc()) {
 </head>
 <body>
     <div class="container-fluid">
-        <?php include 'sidebar.php'; ?>
+            <!-- Sidebar -->
+            <?php include 'sidebar.php'; ?>
 
             <!-- Main Content -->
             <div class="main-content">
                 <!-- Page Header -->
                 <div class="page-header">
                         <div>
-                            <h2 class="mb-0">🐛 Bug Tracker</h2>
+                            <h4 class="mb-0">🐛 Bug Tracker</h4>
                             <p class="text-muted mb-0">Track and manage all reported bugs and issues</p>
                         </div>
                         <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#bugModal" onclick="resetForm()">
@@ -189,10 +237,10 @@ while ($row = $status_result->fetch_assoc()) {
 
                 <!-- Statistics Cards -->
                 <div class="row g-3 mb-4">
-                    <div class="col-10 col-sm-6 col-xl-3">
+                    <div class="col-12 col-sm-6 col-xl-3">
                         <div class="card stat-card projects">
                             <div class="card-body">
-                            <strong>Low:</strong> <?php echo $severity_stats['Low'] ?? 0; ?> bugs
+                                <strong>Low:</strong> <?php echo $severity_stats['Low'] ?? 0; ?> bugs
                             </div>
                         </div>
                     </div>
@@ -200,28 +248,29 @@ while ($row = $status_result->fetch_assoc()) {
                         <div class="card stat-card projects">
                             <div class="card-body bg-warning text-dark rounded">
                             <strong>Medium:</strong> <?php echo $severity_stats['Medium'] ?? 0; ?> bugs
-                            </div>
+                        </div>
                         </div>
                     </div>
                     <div class="col-12 col-sm-6 col-xl-3">
                         <div class="card stat-card projects">
                             <div class="card-body bg-danger text-white rounded">
-                            <strong>High:</strong> <?php echo $severity_stats['High'] ?? 0; ?> bugs
+                                <strong>High:</strong> <?php echo $severity_stats['High'] ?? 0; ?> bugs
                             </div>
                         </div>
                     </div>
                     <div class="col-12 col-sm-6 col-xl-3">
                         <div class="card stat-card projects">
                             <div class="card-body bg-dark text-white rounded">
-                            <strong>Critical:</strong> <?php echo $severity_stats['Critical'] ?? 0; ?> bugs
+                                <strong>Critical:</strong> <?php echo $severity_stats['Critical'] ?? 0; ?> bugs
                             </div>
                         </div>
                     </div>
-                
+                </div>
 
+                <div class="row g-3 mb-4">
                     <div class="col-12 col-sm-6 col-xl-3">
                         <div class="card stat-card projects">
-                            <div class="card-body bg-danger text-white rounded">
+                            <div class="card-body">
                                 <strong>Open:</strong> <?php echo $status_stats['Open'] ?? 0; ?> bugs
                             </div>
                         </div>
@@ -229,14 +278,14 @@ while ($row = $status_result->fetch_assoc()) {
                     <div class="col-12 col-sm-6 col-xl-3">
                         <div class="card stat-card projects">
                             <div class="card-body bg-warning text-dark rounded">
-                            <strong>In Review:</strong> <?php echo $status_stats['In Review'] ?? 0; ?> bugs
+                                <strong>In Review:</strong> <?php echo $status_stats['In Review'] ?? 0; ?> bugs
                             </div>
                         </div>
                     </div>
                     <div class="col-12 col-sm-6 col-xl-3">
                         <div class="card stat-card projects">
                             <div class="card-body bg-success text-white rounded">
-                            <strong>Closed:</strong> <?php echo $status_stats['Closed'] ?? 0; ?> bugs
+                                <strong>Closed:</strong> <?php echo $status_stats['Closed'] ?? 0; ?> bugs
                             </div>
                         </div>
                     </div>
@@ -264,35 +313,52 @@ while ($row = $status_result->fetch_assoc()) {
                                 <tbody>
                                     <?php if ($bugs_result->num_rows > 0): ?>
                                         <?php while ($bug = $bugs_result->fetch_assoc()): ?>
-                                        <tr>
+                                        <tr class="<?php echo ($bug['resolution_remarks'] || $bug['resolution_code']) ? 'has-resolution' : ''; ?>" 
+                                            style="<?php echo ($bug['resolution_remarks'] || $bug['resolution_code']) ? 'cursor: pointer;' : ''; ?>"
+                                            <?php if ($bug['resolution_remarks'] || $bug['resolution_code']): ?>
+                                            onclick="viewBugResolution(<?php echo htmlspecialchars(json_encode($bug)); ?>)"
+                                            title="Click to view resolution details"
+                                            <?php endif; ?>>
                                             <td><?php echo $bug['id']; ?></td>
-                                            <td><strong><?php echo html_escape($bug['title']); ?></strong></td>
                                             <td>
-                                                <a href="project_detail.php?id=<?php echo $bug['project_id']; ?>" class="text-decoration-none">
+                                                <strong><?php echo html_escape($bug['title']); ?></strong>
+                                                <?php if ($bug['resolution_remarks'] || $bug['resolution_code']): ?>
+                                                <span class="badge bg-label-info ms-2" style="font-size: 0.7rem;">📄 Has Resolution</span>
+                                                <?php endif; ?>
+                                            </td>
+                                            <td>
+                                                <a href="project_detail.php?id=<?php echo $bug['project_id']; ?>" 
+                                                   class="text-decoration-none"
+                                                   onclick="event.stopPropagation();">
                                                     <?php echo html_escape($bug['project_name']); ?>
                                                 </a>
                                             </td>
                                             <td>
-                                                <span class="badge bg-<?php echo get_badge_class($bug['severity'], 'severity'); ?>">
+                                                <span class="badge bg-label-<?php echo get_badge_class($bug['severity'], 'severity'); ?>">
                                                     <?php echo $bug['severity']; ?>
                                                 </span>
                                             </td>
                                             <td>
-                                                <span class="badge bg-<?php echo get_badge_class($bug['status'], 'bug'); ?>">
+                                                <span class="badge bg-label-<?php echo get_badge_class($bug['status'], 'bug'); ?>">
                                                     <?php echo $bug['status']; ?>
                                                 </span>
                                             </td>
                                             <td><?php echo format_date($bug['created_at'], 'M d, Y g:i A'); ?></td>
-                                            <td>
+                                            <td onclick="event.stopPropagation();">
+                                                <?php if ($bug['resolution_remarks'] || $bug['resolution_code']): ?>
+                                                <button class="btn btn-sm btn-info" 
+                                                        onclick="viewBugResolution(<?php echo htmlspecialchars(json_encode($bug)); ?>)"
+                                                        title="View Resolution">👁️</button>
+                                                <?php endif; ?>
                                                 <a href="?edit=<?php echo $bug['id']; ?>" 
                                                    class="btn btn-sm btn-warning" 
                                                    data-bs-toggle="modal" 
                                                    data-bs-target="#bugModal"
-                                                   onclick="editBug(<?php echo htmlspecialchars(json_encode($bug)); ?>)"
+                                                   onclick="editBug(<?php echo htmlspecialchars(json_encode($bug)); ?>); event.stopPropagation();"
                                                    title="Edit">✏️</a>
                                                 <a href="?delete=<?php echo $bug['id']; ?>" 
                                                    class="btn btn-sm btn-danger" 
-                                                   onclick="return confirm('Are you sure you want to delete this bug?')"
+                                                   onclick="if(confirm('Are you sure you want to delete this bug?')) return true; else { event.stopPropagation(); return false; }"
                                                    title="Delete">🗑️</a>
                                             </td>
                                         </tr>
@@ -310,7 +376,6 @@ while ($row = $status_result->fetch_assoc()) {
                     </div>
                 </div>
             </div>
-        </div>
     </div>
 
     <!-- Bug Modal (Create/Edit) -->
@@ -358,11 +423,34 @@ while ($row = $status_result->fetch_assoc()) {
                         
                         <div class="mb-3">
                             <label for="status" class="form-label">Status *</label>
-                            <select class="form-select" id="status" name="status" required>
+                            <select class="form-select" id="status" name="status" required onchange="toggleResolutionFields()">
                                 <option value="Open">Open</option>
                                 <option value="In Review">In Review</option>
                                 <option value="Closed">Closed</option>
                             </select>
+                        </div>
+                        
+                        <!-- Resolution Fields (shown when status is Closed) -->
+                        <div id="resolutionFields" style="display: none;">
+                            <div class="alert alert-info">
+                                <strong>📝 Bug Resolution</strong><br>
+                                Please provide resolution details for this closed bug.
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="resolution_remarks" class="form-label">Resolution Remarks</label>
+                                <textarea class="form-control" id="resolution_remarks" name="resolution_remarks" rows="3" 
+                                          placeholder="Describe how the bug was resolved..."></textarea>
+                                <small class="text-muted">Brief description of the fix or resolution</small>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="resolution_code" class="form-label">Resolution Code/Script (Optional)</label>
+                                <textarea class="form-control" id="resolution_code" name="resolution_code" rows="5" 
+                                          style="font-family: monospace; font-size: 0.875rem;"
+                                          placeholder="Paste the code fix here...&#10;function fixBug() {&#10;    // Your code here&#10;}"></textarea>
+                                <small class="text-muted">Paste the code snippet or SQL script that fixed the bug</small>
+                            </div>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -374,14 +462,100 @@ while ($row = $status_result->fetch_assoc()) {
         </div>
     </div>
 
+    <!-- Resolution View Modal -->
+    <div class="modal fade" id="resolutionModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div>
+                        <h5 class="modal-title">🐛 Bug Resolution Details</h5>
+                        <p class="mb-0">
+                            <span id="resolutionBugId" class="text-muted"></span> - 
+                            <span id="resolutionBugTitle" class="fw-semibold"></span>
+                        </p>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Bug Info -->
+                    <div class="d-flex gap-3 mb-4">
+                        <div>
+                            <strong>Status:</strong> 
+                            <span id="resolutionStatus" class="badge"></span>
+                        </div>
+                        <div>
+                            <strong>Severity:</strong> 
+                            <span id="resolutionSeverity" class="badge"></span>
+                        </div>
+                    </div>
+                    
+                    <!-- Resolved Date -->
+                    <div id="resolvedAtSection" class="mb-4">
+                        <div class="alert alert-success">
+                            <strong>✓ Resolved:</strong> <span id="resolvedAtContent"></span>
+                        </div>
+                    </div>
+                    
+                    <!-- Resolution Remarks -->
+                    <div id="resolutionRemarksSection" class="mb-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h6 class="mb-0">📝 Resolution Remarks</h6>
+                            </div>
+                            <div class="card-body">
+                                <p id="resolutionRemarksContent" class="mb-0" style="white-space: pre-wrap;"></p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Resolution Code -->
+                    <div id="resolutionCodeSection">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h6 class="mb-0">💻 Resolution Code</h6>
+                                <button type="button" class="btn btn-sm btn-secondary" onclick="copyCode()">
+                                    📋 Copy Code
+                                </button>
+                            </div>
+                            <div class="card-body">
+                                <pre id="resolutionCodeContent" style="background: #f5f5f5; padding: 1rem; border-radius: 0.375rem; max-height: 400px; overflow-y: auto; margin: 0; font-size: 0.875rem;"><code></code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="js/bootstrap.bundle.min.js"></script>
     <script>
+        // Toggle resolution fields based on status
+        function toggleResolutionFields() {
+            const status = document.getElementById('status').value;
+            const resolutionFields = document.getElementById('resolutionFields');
+            const remarksField = document.getElementById('resolution_remarks');
+            const codeField = document.getElementById('resolution_code');
+            
+            if (status === 'Closed') {
+                resolutionFields.style.display = 'block';
+                remarksField.required = false; // Optional but encouraged
+            } else {
+                resolutionFields.style.display = 'none';
+                remarksField.required = false;
+                codeField.required = false;
+            }
+        }
+        
         // Reset form to create mode
         function resetForm() {
             document.getElementById('modalTitle').textContent = 'Report New Bug';
             document.getElementById('formAction').value = 'create';
             document.getElementById('bugId').value = '';
             document.querySelector('#bugModal form').reset();
+            document.getElementById('resolutionFields').style.display = 'none';
         }
 
         // Populate form for editing
@@ -393,9 +567,98 @@ while ($row = $status_result->fetch_assoc()) {
             document.getElementById('title').value = bug.title;
             document.getElementById('severity').value = bug.severity;
             document.getElementById('status').value = bug.status;
+            document.getElementById('resolution_remarks').value = bug.resolution_remarks || '';
+            document.getElementById('resolution_code').value = bug.resolution_code || '';
+            
+            // Show/hide resolution fields based on status
+            toggleResolutionFields();
+        }
+        
+        // View bug resolution details
+        function viewBugResolution(bug) {
+            const modal = new bootstrap.Modal(document.getElementById('resolutionModal'));
+            document.getElementById('resolutionBugTitle').textContent = bug.title;
+            document.getElementById('resolutionBugId').textContent = '#' + bug.id;
+            document.getElementById('resolutionStatus').textContent = bug.status;
+            document.getElementById('resolutionStatus').className = 'badge bg-label-' + getBugStatusBadge(bug.status);
+            document.getElementById('resolutionSeverity').textContent = bug.severity;
+            document.getElementById('resolutionSeverity').className = 'badge bg-label-' + getSeverityBadge(bug.severity);
+            
+            if (bug.resolution_remarks) {
+                document.getElementById('resolutionRemarksContent').textContent = bug.resolution_remarks;
+                document.getElementById('resolutionRemarksSection').style.display = 'block';
+            } else {
+                document.getElementById('resolutionRemarksSection').style.display = 'none';
+            }
+            
+            if (bug.resolution_code) {
+                document.getElementById('resolutionCodeContent').textContent = bug.resolution_code;
+                document.getElementById('resolutionCodeSection').style.display = 'block';
+            } else {
+                document.getElementById('resolutionCodeSection').style.display = 'none';
+            }
+            
+            if (bug.resolved_at) {
+                document.getElementById('resolvedAtContent').textContent = formatDate(bug.resolved_at);
+                document.getElementById('resolvedAtSection').style.display = 'block';
+            } else {
+                document.getElementById('resolvedAtSection').style.display = 'none';
+            }
+            
+            modal.show();
+        }
+        
+        // Helper function to get badge class for bug status
+        function getBugStatusBadge(status) {
+            const badges = {
+                'Open': 'danger',
+                'In Review': 'warning',
+                'Closed': 'success'
+            };
+            return badges[status] || 'secondary';
+        }
+        
+        // Helper function to get badge class for severity
+        function getSeverityBadge(severity) {
+            const badges = {
+                'Low': 'info',
+                'Medium': 'warning',
+                'High': 'danger',
+                'Critical': 'dark'
+            };
+            return badges[severity] || 'secondary';
+        }
+        
+        // Format date for display
+        function formatDate(dateString) {
+            if (!dateString) return 'N/A';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+        
+        // Copy code to clipboard
+        function copyCode() {
+            const code = document.getElementById('resolutionCodeContent').textContent;
+            navigator.clipboard.writeText(code).then(function() {
+                const btn = document.querySelector('[onclick="copyCode()"]');
+                const originalText = btn.innerHTML;
+                btn.innerHTML = '✓ Copied!';
+                btn.classList.add('btn-success');
+                btn.classList.remove('btn-secondary');
+                setTimeout(function() {
+                    btn.innerHTML = originalText;
+                    btn.classList.remove('btn-success');
+                    btn.classList.add('btn-secondary');
+                }, 2000);
+            });
         }
 
-        // Auto-open modal if edit parameter is present
         <?php if ($edit_bug): ?>
         window.addEventListener('DOMContentLoaded', function() {
             editBug(<?php echo json_encode($edit_bug); ?>);
